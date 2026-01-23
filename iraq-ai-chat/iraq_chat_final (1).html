@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>🇮🇶 Iraq AI Chat</title>
+    <style>
+        body { font-family: Arial; background: #667eea; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .chat { max-width: 500px; width: 100%; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        h1 { text-align: center; color: #667eea; margin-bottom: 20px; }
+        #messages { height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+        .msg-user { text-align: right; background: #667eea; color: white; padding: 8px; margin: 5px 0; border-radius: 5px; }
+        .msg-bot { text-align: left; background: #e0e0e0; padding: 8px; margin: 5px 0; border-radius: 5px; }
+        #input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        button { width: 100%; padding: 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #764ba2; }
+    </style>
+</head>
+<body>
+    <div class="chat">
+        <h1>🇮🇶 Iraq AI Chat</h1>
+        <div id="messages"></div>
+        <input type="text" id="input" placeholder="اكتب رسالتك..." />
+        <button onclick="send()">إرسال</button>
+    </div>
+    <script>
+        const responses = {
+            'greeting': ['مرحبا! كيف حالك؟', 'أهلا وسهلا!', 'سعيد بلقائك!'],
+            'location': ['العراق بلد جميل', 'بغداد عاصمة العراق', 'الجغرافيا العراقية غنية'],
+            'question': ['سؤال ذكي!', 'أستطيع مساعدتك', 'دعني أفكر'],
+            'thanks': ['من دواعي سروري!', 'شكراً لك!', 'يسعدني خدمتك'],
+            'unknown': ['أعتذر، لم أفهم جيداً', 'هل يمكنك إعادة الصياغة؟', 'لا أملك معلومات']
+        };
+        
+        const keywords = {
+            'مرحبا': 'greeting', 'أهلا': 'greeting',
+            'عراق': 'location', 'بغداد': 'location',
+            'كيف': 'question', 'ما': 'question',
+            'شكراً': 'thanks'
+        };
+        
+        function chat(text) {
+            let matches = {};
+            for (let word of text.split(' ')) {
+                if (keywords[word]) {
+                    let cat = keywords[word];
+                    matches[cat] = (matches[cat] || 0) + 1;
+                }
+            }
+            let category = Object.keys(matches).length ? Object.keys(matches).reduce((a,b) => matches[a] > matches[b] ? a : b) : 'unknown';
+            let resArray = responses[category];
+            return resArray[Math.floor(Math.random() * resArray.length)];
+        }
+        
+        function addMsg(text, isUser) {
+            const box = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = isUser ? 'msg-user' : 'msg-bot';
+            div.textContent = text;
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+        
+        function send() {
+            const input = document.getElementById('input');
+            const text = input.value.trim();
+            if (!text) return;
+            addMsg(text, true);
+            input.value = '';
+            setTimeout(() => addMsg(chat(text), false), 300);
+        }
+        
+        addMsg('أهلا وسهلا! 👋', false);
+    </script>
+</body>
+</html>

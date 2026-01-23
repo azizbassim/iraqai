@@ -1,0 +1,31 @@
+{
+  "knowledge_base": {
+    "مرحبا": "greeting",
+    "حالك": "greeting",
+    "شكراً": "thanks",
+    "بغداد": "location",
+    "البصرة": "location",
+    "نهر": "geography",
+    "دجلة": "geography",
+    "الفرات": "geography",
+    "عراق": "history",
+    "ثقافة": "culture",
+    "كيف": "question",
+    "ما": "question",
+    "أين": "question"
+  },
+  "model_type": "keyword_classifier",
+  "language": "Arabic",
+  "country": "Iraq",
+  "accuracy": 70.0,
+  "training_samples": 10,
+  "categories": [
+    "greeting",
+    "location",
+    "thanks",
+    "question",
+    "history",
+    "geography",
+    "culture"
+  ]
+}
