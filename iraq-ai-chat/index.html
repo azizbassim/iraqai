@@ -168,7 +168,9 @@
                 const chatBox = document.getElementById('chatBox');
                 chatBox.removeChild(chatBox.lastChild);
                 
-                addMessage(data.text, false);
+                const botReply = data.text || data.message || data.generations?.[0]?.text || 'لم أفهم';
+                console.log(data); // This helps us debug
+                addMessage(botReply, false);
             } catch (error) {
                 const chatBox = document.getElementById('chatBox');
                 chatBox.removeChild(chatBox.lastChild);
