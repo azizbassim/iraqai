@@ -1,51 +1,191 @@
-async function sendMessage() {
-    const input = document.getElementById('userInput');
-    const text = input.value.trim();
-    
-    if (!text) return;
-    
-    addMessage(text, true);
-    input.value = '';
-    
-    // Show loading
-    addMessage('جاري التفكير...', false);
-    
-    try {
-        const response = await fetch('https://api.cohere.ai/v1/chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer mmCq3qIkuHDYa1g0qfS6530dQuRF6kFxbZAi51Sy'
-            },
-            body: JSON.stringify({
-                model: 'command',
-                message: text,
-                preamble: 'أنت مساعد ذكاء اصطناعي عراقي اسمك Iraq AI. أجب دائماً بالعربية بشكل مختصر ومفيد.'
-            })
-        });
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇮🇶 Iraq AI Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
-        const data = await response.json();
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
         
-        // Remove loading message
-        const chatBox = document.getElementById('chatBox');
-        chatBox.removeChild(chatBox.lastChild);
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
         
-        addMessage(data.text, false);
-    } catch (error) {
-        const chatBox = document.getElementById('chatBox');
-        chatBox.removeChild(chatBox.lastChild);
-        addMessage('عذراً، حدث خطأ. حاول مرة أخرى.', false);
-    }
-}
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            justify-content: flex-end;
+        }
+        
+        .user-message .text {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .bot-message .text {
+            background: #e0e0e0;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .input-area {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-area input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            direction: rtl;
+        }
+        
+        .input-area button {
+            padding: 12px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .input-area button:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇮🇶 Iraq AI</h1>
+            <p>نموذج الذكاء الاصطناعي العراقي - الإصدار 2.0</p>
+        </div>
+        
+        <div class="chat-box" id="chatBox"></div>
+        
+        <div class="input-area">
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="اكتب رسالتك..."
+                onkeypress="if(event.key==='Enter') sendMessage()"
+            >
+            <button onclick="sendMessage()">إرسال</button>
+        </div>
+    </div>
+    
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            addMessage(text, true);
+            input.value = '';
+            
+            addMessage('جاري التفكير...', false);
+            
+            try {
+                const response = await fetch('https://api.cohere.ai/v1/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer mmCq3qIkuHDYa1g0qfS6530dQuRF6kFxbZAi51Sy'
+                    },
+                    body: JSON.stringify({
+                        model: 'command',
+                        message: text,
+                        preamble: 'أنت مساعد ذكاء اصطناعي عراقي اسمك Iraq AI. أجب دائماً بالعربية بشكل مختصر ومفيد.'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                const chatBox = document.getElementById('chatBox');
+                chatBox.removeChild(chatBox.lastChild);
+                
+                addMessage(data.text, false);
+            } catch (error) {
+                const chatBox = document.getElementById('chatBox');
+                chatBox.removeChild(chatBox.lastChild);
+                addMessage('عذراً، حدث خطأ. حاول مرة أخرى.', false);
+            }
+        }
 
-function addMessage(text, isUser) {
-    const chatBox = document.getElementById('chatBox');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-    messageDiv.innerHTML = `<div class="text">${text}</div>`;
-    chatBox.appendChild(messageDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
+        function addMessage(text, isUser) {
+            const chatBox = document.getElementById('chatBox');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.innerHTML = `<div class="text">${text}</div>`;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
 
-// Welcome message
-addMessage('أهلا وسهلا! 👋 أنا Iraq AI. كيف يمكنني مساعدتك؟', false);
+        addMessage('أهلا وسهلا! 👋 أنا Iraq AI. كيف يمكنني مساعدتك؟', false);
+    </script>
+</body>
+</html>
