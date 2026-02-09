@@ -150,17 +150,13 @@
             addMessage('جاري التفكير...', false);
             
             try {
-                const response = await fetch('https://api.cohere.ai/v1/chat', {
+                // ✅ No API token here! Calls our secure backend
+                const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ehpdvXOLsVM8kbvHcZDQwntTlm7GOSrwxXY09fBG'
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        model: 'command-a-03-2025',
-                        message: text,
-                        preamble: 'أنت مساعد ذكاء اصطناعي عراقي اسمك Iraq AI. أجب دائماً بالعربية بشكل مختصر ومفيد.'
-                    })
+                    body: JSON.stringify({ message: text })
                 });
                 
                 const data = await response.json();
@@ -168,8 +164,7 @@
                 const chatBox = document.getElementById('chatBox');
                 chatBox.removeChild(chatBox.lastChild);
                 
-                const botReply = data.text || data.message || data.generations?.[0]?.text || 'لم أفهم';
-                console.log(data); // This helps us debug
+                const botReply = data.reply || 'لم أفهم';
                 addMessage(botReply, false);
             } catch (error) {
                 const chatBox = document.getElementById('chatBox');
