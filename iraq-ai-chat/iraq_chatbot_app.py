@@ -1,7 +1,17 @@
 import json
 import random
+import os
+import requests
+from flask import Flask, request, jsonify, render_template
+from dotenv import load_dotenv
 
-# Load model
+# Load environment variables
+load_dotenv()
+API_TOKEN = os.getenv("API_TOKEN")  # ✅ Token hidden here
+
+app = Flask(__name__, template_folder='.')
+
+# ========== Your existing local model ==========
 try:
     with open('iraq_ai_model_v2.json', 'r', encoding='utf-8') as f:
         model_data = json.load(f)
@@ -23,7 +33,7 @@ responses = {
     'unknown': ['أعتذر، لم أفهم جيداً', 'هل يمكنك إعادة الصياغة؟', 'لا أملك معلومات عن هذا']
 }
 
-def chat(user_input):
+def local_chat(user_input):
     words = user_input.split()
     matches = {}
     
@@ -37,28 +47,39 @@ def chat(user_input):
     
     return response, category
 
-print("=" * 70)
-print("🇮🇶 IRAQ AI CHATBOT - نموذج الذكاء الاصطناعي العراقي")
-print("=" * 70)
-print("\nاكتب رسالتك (Type in Arabic) | اكتب 'خروج' للخروج\n")
+# ========== Web Routes ==========
 
-while True:
-    try:
-        user_input = input("👤 You: ").strip()
-        
-        if not user_input:
-            continue
-        
-        if user_input.lower() in ['exit', 'quit', 'خروج']:
-            print("\n🤖 شكراً لك! وداعاً!")
-            break
-        
-        response, category = chat(user_input)
-        print(f"🤖 Bot: {response}")
-        print(f"   [Category: {category}]\n")
-        
-    except KeyboardInterrupt:
-        print("\n\n👋 Goodbye!")
-        break
-    except Exception as e:
-        print(f"Error: {e}")
+@app.route('/')
+def home():
+    return render_template('index.html')  # Serves your HTML
+
+# ========== API Route (Token stays hidden!) ==========
+
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    user_message = request.json.get('message')
+    
+    # Call external LLM API with hidden token
+    # Change this URL based on your LLM provider
+    response = requests.post(
+        'https://api.openai.com/v1/chat/completions',  # or your LLM URL
+        headers={
+            'Authorization': f'Bearer {API_TOKEN}',  # ✅ Secure!
+            'Content-Type': 'application/json'
+        },
+        json={
+            'model': 'gpt-4',
+            'messages': [{'role': 'user', 'content': user_message}]
+        }
+    )
+    
+    return jsonify(response.json())
+
+# ========== Run Server ==========
+
+if __name__ == '__main__':
+    print("=" * 70)
+    print("🇮🇶 IRAQ AI CHATBOT - Server Running")
+    print("=" * 70)
+    print("\nOpen http://localhost:5000 in your browser\n")
+    app.run(debug=True, port=5000)
